@@ -1,19 +1,38 @@
-// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
+import plugin from 'tailwindcss/plugin';
+
+// Asegúrate de importar el plugin de animación si lo usas
+// (Es un paso necesario ya que tu CSS lo importa)
+// Si utilizas otro plugin para @custom-variant o @theme, DEBES añadirlo aquí.
+import animate from 'tailwindcss-animate'; 
+
 export default {
-  // **MUY IMPORTANTE:** Debe apuntar a todos tus archivos JSX
+  // CRÍTICO: Asegura que el contenido escanee TODOS los archivos
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}", // Esto cubre todos tus componentes
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // El resto de tu configuración...
   theme: {
     extend: {},
   },
   plugins: [
-    // Si el código usa extensiones de Tailwind de terceros o plugins
-    // como '@custom-variant' y '@theme', es posible que necesites
-    // agregar el plugin de Tailwind CSS que las proporciona aquí.
-    // Por ejemplo, si usas 'tailwindcss-radix' o 'tailwindcss-experimental'
-    // deberías incluirlo aquí si tu código lo requiere.
+    // CRÍTICO: Registra el plugin de animación para que funcione el import
+    animate, 
+    
+    // Si tu proyecto usa @custom-variant o @theme de otra librería (como un preset de Radix UI o un plugin de Shadcn/UI), DEBES añadirlo aquí.
+    // Ejemplo (NO descomentar a menos que sepas qué plugin es):
+    // require('@nombre/del/otro-plugin'),
+
+    // Si tu CSS utiliza el concepto de layers, déjalo aquí
+    plugin(function({ addBase, addUtilities, theme }) {
+      addUtilities({
+        '.dark': {
+          // Esta lógica se suele manejar dentro de un plugin.
+          // Si tu tema usa un plugin específico para el dark mode, 
+          // debe estar declarado junto a 'animate'.
+        }
+      });
+    }),
   ],
 };

@@ -114,6 +114,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
+  /* --- MEJORA PARA EL DESBORDAMIENTO --- */
+  html, body {
+    overflow-x: hidden; /* Esto oculta cualquier desbordamiento horizontal */
+    width: 100%;       /* Esto asegura que nunca sea más ancho que la ventana */
+  }
+  /* -------------------------------------- */
+
   body {
     @apply bg-background text-foreground;
   }

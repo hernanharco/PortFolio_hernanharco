@@ -1,29 +1,29 @@
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { href: '#home', label: 'Inicio' },
-    { href: '#about', label: 'Sobre mí' },
-    { href: '#skills', label: 'Habilidades' },
-    { href: '#projects', label: 'Proyectos' },
-    { href: '#experience', label: 'Experiencia' },
-    { href: '#family', label: 'Familia & Valores' },
-    { href: '#contact', label: 'Contacto' }
+    { href: "#home", label: "Inicio" },
+    { href: "#about", label: "Sobre mí" },
+    { href: "#skills", label: "Habilidades" },
+    { href: "#projects", label: "Proyectos" },
+    { href: "#experience", label: "Experiencia" },
+    { href: "#family", label: "Familia & Valores" },
+    { href: "#contact", label: "Contacto" },
   ];
 
   const scrollToSection = (href) => {
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
     setIsMenuOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
+    <nav className="fixed top-0 left-0 right-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -81,4 +81,3 @@ const Navigation = () => {
 };
 
 export default Navigation;
-

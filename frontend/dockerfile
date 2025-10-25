@@ -1,0 +1,22 @@
+# frontend/Dockerfile
+FROM node:20  
+# 👈 Cambiado de node:20-alpine a node:20
+
+# Instalar pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+#1. Crea directorio /app 2.Instrucciones despues de esta linea se van a ejectura en ese directorio
+WORKDIR /app
+
+# Copiar solo lo necesario para instalar dependencias
+COPY package.json pnpm-lock.yaml ./
+
+# Instalar dependencias
+RUN pnpm install --frozen-lockfile
+
+# Copiar el resto del código
+COPY . .
+
+EXPOSE 5173
+
+CMD ["pnpm", "run", "dev"]

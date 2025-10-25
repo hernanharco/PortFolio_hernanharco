@@ -64,7 +64,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Contacto</h3>
             <div className="space-y-2 text-gray-400">
               <p>📍 Avilés, Asturias - España</p>
-              <p>📧 hernan.arango@email.com</p>
+              <p>📧 hernan.harco@email.com</p>
               <p>💼 Disponible para proyectos</p>
             </div>
           </div>
