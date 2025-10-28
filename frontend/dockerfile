@@ -1,22 +1,19 @@
 # frontend/Dockerfile
-FROM node:20  
-# 👈 Cambiado de node:20-alpine a node:20
+FROM node:20-alpine
 
-# Instalar pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-#1. Crea directorio /app 2.Instrucciones despues de esta linea se van a ejectura en ese directorio
 WORKDIR /app
 
-# Copiar solo lo necesario para instalar dependencias
-COPY package.json pnpm-lock.yaml ./
+# Copia package.json primero (para caché)
+COPY package*.json ./
 
-# Instalar dependencias
-RUN pnpm install --frozen-lockfile
+# Instala dependencias
+RUN npm install
 
-# Copiar el resto del código
+# Copia el resto del código
 COPY . .
 
+# Expone el puerto de Vite (por defecto 5173)
 EXPOSE 5173
 
+# Inicia el servidor de desarrollo
 CMD ["pnpm", "run", "dev"]
