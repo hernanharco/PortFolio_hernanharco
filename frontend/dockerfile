@@ -1,19 +1,23 @@
-# frontend/Dockerfile
-FROM node:20-alpine
+# Imagen base ligera con Node 20
+FROM node:20-slim
 
+# Setea el directorio de trabajo
 WORKDIR /app
 
-# Copia package.json primero (para caché)
-COPY package*.json ./
+# Instala pnpm globalmente
+RUN npm install -g pnpm
+
+# Copia los archivos de dependencias y lockfile
+COPY package.json pnpm-lock.yaml ./
 
 # Instala dependencias
-RUN npm install
+RUN pnpm install
 
-# Copia el resto del código
+# Copia el resto del código fuente
 COPY . .
 
-# Expone el puerto de Vite (por defecto 5173)
+# Expone el puerto de Vite
 EXPOSE 5173
 
-# Inicia el servidor de desarrollo
+# Comando de desarrollo con host accesible desde Docker
 CMD ["pnpm", "run", "dev"]

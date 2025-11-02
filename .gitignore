@@ -235,3 +235,5 @@ docs/_build/
 !**/vite.config.ts
 !**/tsconfig.json
 !**/index.html
+*storybook.log
+storybook-static
