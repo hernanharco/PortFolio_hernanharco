@@ -1,7 +1,13 @@
 import { ArrowDown, MapPin, Heart, Code, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button.jsx';
+import { useHero } from '@/hooks/useHero'
 
 const Hero = () => {
+
+  const { fetchHeroes } = useHero();
+
+  console.log("fetchHeroes: ", fetchHeroes)
+
   const scrollToAbout = () => {
     const element = document.querySelector('#about');
     if (element) {

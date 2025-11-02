@@ -74,8 +74,7 @@ const useHero = () => {
     
     // 3. Efecto inicial: Cargar los héroes al montar el hook/componente.
     useEffect(() => {
-        fetchHeroes();
-        console.log("fetchHeroes: ", fetchHeroes)
+        fetchHeroes();        
     }, [fetchHeroes]); // Se ejecuta solo al montar, usando la función memorizada
 
     // 4. Exponer el estado y las funciones que el componente necesita
@@ -86,4 +85,8 @@ const useHero = () => {
         fetchHeroes, // Para recargar manualmente
         addHero,
         deleteHero,
-        // Aquí agregarías updateHero y patchHero si fueran necesarios en el 
+        // Aquí agregarías updateHero y patchHero si fueran necesarios en el componente
+    };
+};
+
+export default useHero;
