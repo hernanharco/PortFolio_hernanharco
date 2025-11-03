@@ -1,0 +1,36 @@
+# === Etapa 1: Construcción (builder) ===
+# Imagen base Node para instalar dependencias y construir Storybook
+FROM node:20-slim AS builder
+
+# Habilitar pnpm con corepack
+RUN corepack enable
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de bloqueo y manifest
+COPY pnpm-lock.yaml package.json ./
+
+# Instalar dependencias
+RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
+
+# Copiar el resto del código (incluyendo src y archivos de configuración)
+COPY . .
+
+# Construir Storybook
+RUN pnpm run build-storybook
+
+# === Etapa 2: Ejecución (runtime) ===
+# Utiliza una imagen ligera para servir archivos estáticos
+FROM nginx:alpine
+
+# Copiar los archivos estáticos construidos desde la etapa 'builder'
+COPY --from=builder /app/storybook-static /usr/share/nginx/html
+
+# Exponer el puerto 80 (puerto de Nginx)
+EXPOSE 80
+
+# Iniciar Nginx
+CMD ["nginx", "-g", "daemon off;"]

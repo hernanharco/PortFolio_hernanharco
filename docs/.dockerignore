@@ -1,0 +1,4 @@
+# Excluye la carpeta de dependencias local y otros archivos de caché
+node_modules
+dist
+.cache
