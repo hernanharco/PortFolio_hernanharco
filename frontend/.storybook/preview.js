@@ -1,4 +1,4 @@
-/** @type { import('@storybook/react-vite').Preview } */
+/** @type { import('@storybook/vue3-vite').Preview } */
 const preview = {
   parameters: {
     controls: {

@@ -48,7 +48,7 @@ export const Small = {
   },
 };
 
-export const Herostoriesjsx = {
+export const Hero = {
   args:{
     primary:false,
     label:"Button"

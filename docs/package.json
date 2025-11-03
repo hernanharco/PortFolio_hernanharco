@@ -3,19 +3,26 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vitepress dev docs",
-    "build": "vitepress build docs",
-    "serve": "vitepress serve docs"
+    "dev": "vitepress dev .",
+    "build": "pnpx vitepress build .",
+    "serve": "vitepress serve ."
+  },
+  "dependencies": {
+    "vue": "^3.3.4",
+    "vitepress": "^1.6.4"
   },
   "devDependencies": {
-    "vue": "3.2.44",
-    "vitepress": "1.0.0-alpha.28"
+    
   },
   "pnpm": {
     "peerDependencyRules": {
       "ignoreMissing": [
         "@algolia/client-search"
       ]
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "esbuild",
+      "vue-demi"
+    ]
   }
 }

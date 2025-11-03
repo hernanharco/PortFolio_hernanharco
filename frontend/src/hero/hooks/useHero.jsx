@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import HeroDAO from '../service/HeroDAO.js'; // Ruta corregida para el entorno de compilación
+import HeroDAO from '@/hero/service/HeroDAO.js'; // Ruta corregida para el entorno de compilación
 
 /**
  * Custom Hook para gestionar el estado y las operaciones CRUD de los héroes.
@@ -74,7 +74,7 @@ const useHero = () => {
     
     // 3. Efecto inicial: Cargar los héroes al montar el hook/componente.
     useEffect(() => {
-        fetchHeroes();        
+        fetchHeroes();           
     }, [fetchHeroes]); // Se ejecuta solo al montar, usando la función memorizada
 
     // 4. Exponer el estado y las funciones que el componente necesita

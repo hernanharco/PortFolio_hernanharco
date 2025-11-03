@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',    
+    'corsheaders',
+    'rest_framework',
     'drf_spectacular',
     'accounts',
 ]
@@ -149,6 +150,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5175",   # ✅ Acceso desde el navegador en desarrollo
+    "http://frontend:5175",    # ✅ Acceso desde dentro de Docker (si es necesario)
     "http://localhost:5173",   # ✅ Acceso desde el navegador en desarrollo
     "http://frontend:5173",    # ✅ Acceso desde dentro de Docker (si es necesario)
 ]
