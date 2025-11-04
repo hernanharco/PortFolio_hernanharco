@@ -1,4 +1,6 @@
-const { XataClient } = require('@xata.io/client');
+const xataClient = require('@xata.io/client');
+
+const { XataClient } = xataClient; // 👈 Así accedemos correctamente a la clase
 
 const xata = new XataClient({
   apiKey: process.env.XATA_API_KEY,
@@ -9,7 +11,7 @@ exports.handler = async () => {
   try {
     const records = await xata.db.accounts_heromodels.getAll();
 
-    console.log("data records: ", records);
+    console.log("✅ Data fetched:", records);
 
     return {
       statusCode: 200,
@@ -17,7 +19,7 @@ exports.handler = async () => {
       body: JSON.stringify({ count: records.length, data: records }),
     };
   } catch (error) {
-    console.error("Xata fetch error:", error);
+    console.error("❌ Xata fetch error:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),
