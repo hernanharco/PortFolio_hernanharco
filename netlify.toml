@@ -9,8 +9,10 @@
   XATA_DATABASE_URL = ""
 
 [functions]
+  # Incluye el cliente de Xata en el bundle de la función
   external_node_modules = ["@xata.io/client"]
 
+# Si usas React / Vite SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
