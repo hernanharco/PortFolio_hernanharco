@@ -9,6 +9,8 @@ const xata = new XataClient({
 export async function handler() {
   try {
     const records = await xata.db.accounts_heromodels.getAll();
+    
+    console.log("data records: ", records)
 
     return {
       statusCode: 200,
