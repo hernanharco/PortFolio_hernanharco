@@ -1,3 +1,4 @@
+// frontend/netlify/functions/getProjects.js
 import { XataClient } from '@xata.io/client';
 
 const xata = new XataClient({
@@ -9,17 +10,12 @@ export async function handler() {
   try {
     const records = await xata.db.accounts_heromodels.getAll();
 
-    console.log("Fetched records:", records);
-
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        count: records.length,
-        data: records,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ count: records.length, data: records }),
     };
   } catch (error) {
-    console.error("Xata fetch error:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),
