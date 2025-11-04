@@ -8,13 +8,13 @@
         "preview": "vite preview"
       },
       "dependencies": {
-        "@xata.io/client": "0.30.1", <--- ¡AGREGA O VERIFICA ESTO!
+        "@xata.io/client": "0.30.1", 
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
-        // ... otras dependencias
+        
       },
       "devDependencies": {
-        // ... dev dependencies
+        
       }
     }
     
