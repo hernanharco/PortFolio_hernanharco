@@ -16,6 +16,7 @@
 [functions]
   # 🚨 Línea que debes eliminar o comentar para forzar el bundling interno:
   # external_node_modules = ["@xata.io/client"]
+  node_bundler = "zip"
 
 [[redirects]]
   from = "/api/*"
