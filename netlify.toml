@@ -1,27 +1,17 @@
 [build]
-# Directorio base donde vive tu frontend
-base = "frontend"
+  base = "frontend"
+  command = "pnpm run build"
+  publish = "frontend/dist"
+  functions = "netlify/functions"
 
-# Comando para construir el sitio
-command = "pnpm run build"
-
-# Carpeta que Netlify publicará
-publish = "frontend/dist"
-
-# Carpeta de funciones serverless
-functions = "netlify/functions"
-
-# Variables de entorno que usas en tu función (ya configuradas en Netlify)
 [build.environment]
   XATA_API_KEY = ""
   XATA_DATABASE_URL = ""
 
-# Configuración para la función hero.js
-[[functions]]
-  name = "hero"
-  included_files = ["netlify/functions/hero.js"]
+[functions]
+  # Indica qué módulos externos deben incluirse en el bundle de las funciones
+  external_node_modules = ["@xata.io/client"]
 
-# Opcional: redirecciones (si usas SPA con Vite/React)
 [[redirects]]
   from = "/*"
   to = "/index.html"
