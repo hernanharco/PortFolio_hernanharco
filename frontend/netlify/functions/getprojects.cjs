@@ -1,15 +1,16 @@
-// Importamos el cliente de Xata
 const { XataClient } = require("@xata.io/client");
 
-// Variables de entorno para debug
-const apiKey = process.env.XATA_API_KEY ? '******' : 'MISSING_KEY';
+// Variables de entorno para debug (solo para logging)
+const apiKeyStatus = process.env.XATA_API_KEY ? 'CONFIGURED' : 'MISSING_KEY';
 const dbUrl = process.env.XATA_DATABASE_URL;
 
-console.log("DEBUG: API Key Status:", apiKey);
+console.log("DEBUG: API Key Status:", apiKeyStatus);
 console.log("DEBUG: DB URL:", dbUrl);
 
-// Intentamos crear el cliente
-let xata;
+let xata = null; // Inicializamos a null
+let initError = null;
+
+// Intentamos crear el cliente UNA SOLA VEZ al inicio del módulo
 try {
     xata = new XataClient({
         apiKey: process.env.XATA_API_KEY,
@@ -17,21 +18,25 @@ try {
     });
     console.log("DEBUG: XataClient created successfully.");
 } catch (e) {
-    console.error("CRITICAL ERROR: XataClient initialization failed:", e.message);
-    // Si la inicialización falla aquí, devolvemos un error diferente.
-    exports.handler = async () => ({
-        statusCode: 500,
-        body: JSON.stringify({ error: `Initialization Failed: ${e.message}` }),
-    });
-    return;
+    // Si falla la inicialización, guardamos el error para usarlo en el handler
+    initError = e.message;
+    console.error("CRITICAL ERROR: XataClient initialization failed:", initError);
 }
 
 // Handler de la Función Netlify
 exports.handler = async (event, context) => {
-    // Si la inicialización falló arriba, el handler no se ejecuta (gracias al return).
-    // Si llegamos aquí, 'xata' debería estar definido.
+    // 1. Verificar si la inicialización falló
+    if (initError) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ 
+                error: `Xata Initialization Error (Check Netlify Environment Vars): ${initError}` 
+            }),
+        };
+    }
+    
+    // 2. Si la inicialización fue exitosa, procedemos con la consulta
     try {
-        // Linea donde falla: xata.db.accounts_heromodels
         const records = await xata.db.accounts_heromodels
             .select(["id", "city", "title", "subtitle", "example_field_name"])
             .getMany();
@@ -46,6 +51,7 @@ exports.handler = async (event, context) => {
             body: JSON.stringify(records),
         };
     } catch (error) {
+        // 3. Capturamos cualquier error durante la consulta (fetch error)
         console.error("❌ Xata fetch error during run:", error);
         return {
             statusCode: 500,
