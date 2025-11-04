@@ -1,6 +1,5 @@
-const xataClient = require('@xata.io/client');
-
-const { XataClient } = xataClient; // 👈 Así accedemos correctamente a la clase
+const xataModule = require('@xata.io/client');
+const XataClient = xataModule.default || xataModule.XataClient;
 
 const xata = new XataClient({
   apiKey: process.env.XATA_API_KEY,
