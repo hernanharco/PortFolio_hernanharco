@@ -1,6 +1,8 @@
-// Importación MÁS ROBUSTA: Accedemos directamente a la ruta compilada
-// del cliente de Xata. Esto soluciona problemas de bundling.
-const { XataClient } = require("@xata.io/client/dist/client/index.js");
+// Importamos el cliente de Xata.
+// Utilizamos la importación genérica, pero la combinaremos con un ajuste en netlify.toml.
+const clientModule = require("@xata.io/client");
+const XataClient = clientModule.XataClient || clientModule.default?.XataClient || clientModule.default;
+
 
 // --- Variables de Debug ---
 const apiKeyStatus = process.env.XATA_API_KEY ? 'CONFIGURADA' : 'CLAVE_FALTANTE';
@@ -14,12 +16,17 @@ let initError = null; // Variable para almacenar errores de inicialización
 
 // 🚨 Paso 1: Creación del Cliente
 try {
-    // Intentamos crear el cliente UNA SOLA VEZ al inicio del módulo.
-    xata = new XataClient({
-        apiKey: process.env.XATA_API_KEY,
-        databaseURL: process.env.XATA_DATABASE_URL
-    });
-    console.log("DEBUG: XataClient creado exitosamente.");
+    // Si la clase se cargó, la inicializamos.
+    if (typeof XataClient === 'function' && XataClient.prototype.constructor) {
+        xata = new XataClient({
+            apiKey: process.env.XATA_API_KEY,
+            databaseURL: process.env.XATA_DATABASE_URL
+        });
+        console.log("DEBUG: XataClient creado exitosamente.");
+    } else {
+        initError = "Error interno: XataClient no se resolvió como constructor.";
+        console.error("ERROR CRÍTICO:", initError);
+    }
 } catch (e) {
     // Si la inicialización falla (por ej. falta una variable), guardamos el error.
     initError = `Fallo en la inicialización: ${e.message}`;
