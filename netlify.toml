@@ -1,0 +1,23 @@
+[build]
+
+1. BASE DIRECTORY: La carpeta donde se encuentra tu proyecto principal (frontend/React).
+
+base = "frontend"
+
+2. BUILD COMMAND: El comando que usa pnpm para compilar tu frontend.
+
+command = "pnpm run build"
+
+3. PUBLISH DIRECTORY: La subcarpeta dentro de 'base' donde se guardan los archivos finales.
+
+publish = "frontend/dist"
+
+[functions]
+
+FUNCTIONS DIRECTORY: La ruta para encontrar tus funciones serverless.
+
+Usamos "../" para decirle a Netlify que salga de la carpeta 'frontend'
+
+y luego entre en 'netlify/functions'.
+
+directory = "../netlify/functions"
