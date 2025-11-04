@@ -1,18 +1,16 @@
 [build]
-  base = "frontend"
-  command = "pnpm run build"
-  publish = "dist"
-  functions = "../netlify/functions"
+  command = "pnpm --filter ./frontend... run build"
+  publish = "frontend/dist"
+  functions = "netlify/functions"
 
 [build.environment]
   XATA_API_KEY = ""
   XATA_DATABASE_URL = ""
 
 [functions]
-  # Incluye el cliente de Xata en el bundle de la función
+  # Incluir el cliente de Xata en el bundle de la función
   external_node_modules = ["@xata.io/client"]
 
-# Si usas React / Vite SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
