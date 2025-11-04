@@ -1,10 +1,12 @@
-const xataModule = require('@xata.io/client');
-const XataClient = xataModule.default || xataModule.XataClient;
+const xataClient = require('@xata.io/client');
 
-const xata = new XataClient({
-  apiKey: process.env.XATA_API_KEY,
-  databaseURL: process.env.XATA_DATABASE_URL,
-});
+const createClient = xataClient.getXataClient || xataClient.XataClient || xataClient.default;
+const xata = typeof createClient === "function"
+  ? createClient({
+      apiKey: process.env.XATA_API_KEY,
+      databaseURL: process.env.XATA_DATABASE_URL,
+    })
+  : createClient;
 
 exports.handler = async () => {
   try {
