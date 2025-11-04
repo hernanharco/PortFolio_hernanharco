@@ -1,6 +1,8 @@
 // frontend/netlify/functions/getProjects.js
 import { XataClient } from '@xata.io/client';
 
+const { XataClient } = require('@xata.io/client');
+
 const xata = new XataClient({
   apiKey: process.env.XATA_API_KEY,
   databaseURL: process.env.XATA_DATABASE_URL,
