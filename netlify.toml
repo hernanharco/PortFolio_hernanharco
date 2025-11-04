@@ -1,13 +1,7 @@
 [build]
-
-Configuración del frontend (carpeta principal y comando de compilación)
-
 base = "frontend"
 command = "pnpm run build"
 publish = "frontend/dist"
 
 [functions]
-
-Configuración para buscar funciones fuera del directorio base (frontend)
-
 directory = "../netlify/functions"
