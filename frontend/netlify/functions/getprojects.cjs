@@ -1,6 +1,8 @@
 // Importamos el cliente de Xata.
-// Usamos la importación con 'require' para asegurar la compatibilidad en el entorno Node.js de Netlify.
-const { XataClient } = require("@xata.io/client");
+// Utilizamos una estrategia de importación robusta para asegurar que Netlify encuentre la clase XataClient
+// y evitar el error "XataClient is not a constructor".
+const clientModule = require("@xata.io/client");
+const XataClient = clientModule.XataClient || clientModule.default?.XataClient || clientModule.default;
 
 // --- Variables de Debug ---
 // (Estas variables nos ayudan a confirmar que Netlify está leyendo las variables de entorno)
@@ -13,18 +15,23 @@ console.log("DEBUG: URL de Base de Datos:", dbUrl);
 let xata = null; // Inicializamos el cliente a null
 let initError = null; // Variable para almacenar errores de inicialización
 
-// Intentamos crear el cliente UNA SOLA VEZ al inicio del módulo.
-try {
-    xata = new XataClient({
-        // La clave y la URL se leen automáticamente del entorno.
-        apiKey: process.env.XATA_API_KEY,
-        databaseURL: process.env.XATA_DATABASE_URL
-    });
-    console.log("DEBUG: XataClient creado exitosamente.");
-} catch (e) {
-    // Si la inicialización falla (por ej. falta una variable), guardamos el error.
-    initError = e.message;
-    console.error("ERROR CRÍTICO: Fallo en la inicialización de XataClient:", initError);
+// 🚨 Paso 1: Verificación de la Clase y Creación del Cliente
+if (typeof XataClient !== 'function' || !XataClient.prototype.constructor) {
+    initError = "La clase XataClient no se pudo cargar correctamente (Problema de Importación/Bundler)";
+    console.error("ERROR CRÍTICO:", initError);
+} else {
+    try {
+        // Intentamos crear el cliente UNA SOLA VEZ al inicio del módulo.
+        xata = new XataClient({
+            apiKey: process.env.XATA_API_KEY,
+            databaseURL: process.env.XATA_DATABASE_URL
+        });
+        console.log("DEBUG: XataClient creado exitosamente.");
+    } catch (e) {
+        // Si la inicialización falla (por ej. falta una variable), guardamos el error.
+        initError = e.message;
+        console.error("ERROR CRÍTICO: Fallo en la inicialización de XataClient:", initError);
+    }
 }
 
 // Handler principal de la Función Netlify
@@ -34,18 +41,17 @@ exports.handler = async (event, context) => {
         return {
             statusCode: 500,
             body: JSON.stringify({ 
-                error: `Error de Inicialización de Xata (Revisar Variables de Entorno de Netlify): ${initError}` 
+                error: `Error de Inicialización de Xata (Fatal): ${initError}` 
             }),
         };
     }
     
     // 2. Si la inicialización fue exitosa, procedemos con la consulta.
     try {
-        // Asegúrate de que 'accounts_heromodels' sea el nombre correcto de tu tabla, 
-        // según lo que vimos en la captura de Xata.
+        // Consulta a Xata. Al no usar .select(), traeremos *todos* los campos de la tabla.
         const records = await xata.db.accounts_heromodels
-            .select(["id", "city", "title", "subtitle", "example_field_name"])
-            .getMany();
+            // .select(["id", "city", "title", "subtitle", "example_field_name"]) // <-- Línea de .select() comentada/eliminada
+            .getMany(); // El método getMany() sin select trae todos los campos.
 
         console.log("ÉXITO: Registros de datos obtenidos:", records.length);
 
