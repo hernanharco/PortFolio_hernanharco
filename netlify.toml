@@ -2,18 +2,20 @@
   base = "frontend"
   command = "pnpm install --no-frozen-lockfile && pnpm run build"
   publish = "dist"
-  functions = "/netlify/functions"
+  functions = "./netlify/functions"
 
 [build.environment]
-  NODE_VERSION = "22"
+  NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
   NPM_CONFIG_USERCONFIG = ""
   NETLIFY_USE_PNPM = "true"
-  XATA_API_KEY = ""
-  XATA_DATABASE_URL = ""
+  # Estas variables están bien en Netlify UI, no aquí
+  # XATA_API_KEY = "" 
+  # XATA_DATABASE_URL = "" 
 
 [functions]
-  external_node_modules = ["@xata.io/client"]
+  # 🚨 Línea que debes eliminar o comentar para forzar el bundling interno:
+  # external_node_modules = ["@xata.io/client"]
 
 [[redirects]]
   from = "/api/*"
