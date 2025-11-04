@@ -4,11 +4,14 @@
   functions = "netlify/functions"
 
 [build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--legacy-peer-deps"
+  NPM_CONFIG_USERCONFIG = ""
+  NETLIFY_USE_PNPM = "true"
   XATA_API_KEY = ""
   XATA_DATABASE_URL = ""
 
 [functions]
-  # Incluir el cliente de Xata en el bundle de la función
   external_node_modules = ["@xata.io/client"]
 
 [[redirects]]
