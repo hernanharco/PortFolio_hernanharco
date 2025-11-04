@@ -1,0 +1,8 @@
+{
+  "name": "netlify-functions-deps",
+  "version": "1.0.0",
+  "description": "Dependencies required for Netlify functions.",
+  "dependencies": {
+    "@xata.io/client": "^0.29.0"
+  }
+}
