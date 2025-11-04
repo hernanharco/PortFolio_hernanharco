@@ -1,5 +1,5 @@
 [build]
-  base = ""
+  base = "frontend"
   command = "pnpm install --no-frozen-lockfile && pnpm --filter ./frontend... run build"
   publish = "frontend/dist"
   functions = "netlify/functions"
