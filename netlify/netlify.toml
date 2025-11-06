@@ -1,0 +1,20 @@
+[build]
+  # El comando de build ejecuta el build dentro de la carpeta frontend
+  command = "cd frontend && pnpm install && pnpm run build"
+  # La carpeta de salida de Vite es frontend/dist
+  publish = "frontend/dist"
+  # Las funciones se encuentran en esta ruta relativa
+  functions = "frontend/netlify/functions"
+
+[dev]
+framework = "#custom"
+command = "pnpm --prefix ../frontend dev"
+targetPort = 5173
+publish = "../frontend/dist"
+functions = "./functions"
+
+[[redirects]]
+  # Redirección para el SPA (Single Page Application)
+  from = "/*"
+  to = "/index.html"
+  status = 200

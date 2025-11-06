@@ -1,9 +1,10 @@
-// **Ubicación en el proyecto: frontend/src/components/hero/service/HeroDAO.js**
-
 import axios from 'axios';
 
-// La URL base de tu API (ej: el endpoint de tu servicio backend)
-const API_BASE_URL = '/.netlify/functions/getProjects'; 
+// La URL base es la ruta relativa que se usará. 
+// 1. En Netlify Dev, esta ruta será interceptada por las redirecciones (ej: a /.netlify/functions/hero).
+// 2. En producción, Netlify interceptará esta ruta y la enviará a la función.
+// 3. Si usas un backend de Node/Express, esta ruta relativa puede ser manejada por un proxy de Vite.
+const API_BASE_URL = '/api/hero'; 
 
 /**
  * Clase Data Access Object (DAO) para el recurso 'hero'.
@@ -12,12 +13,12 @@ const API_BASE_URL = '/.netlify/functions/getProjects';
 class HeroDAO {
 
     constructor() {
-        // Crea una instancia de axios con la URL base predefinida.
+        // Crea una instancia de axios con la URL base relativa.
         this.api = axios.create({
             baseURL: API_BASE_URL,
             headers: {
                 'Content-Type': 'application/json',
-                // Ejemplo de Autenticación:
+                // Si usas tokens, actívalo aquí:
                 // 'Authorization': `Bearer ${localStorage.getItem('token')}` 
             }
         });
@@ -30,11 +31,13 @@ class HeroDAO {
      */
     async getAllHeroes() {
         try {
+            // Llama a /api/hero/, que será redirigido a la Netlify Function 'hero'
             const response = await this.api.get('/'); 
             return response.data; // Retorna un array de héroes
         } catch (error) {
             console.error("Error fetching all heroes:", error.response || error);
-            throw error; // Propagar el error para que la capa lógica lo maneje
+            // El error 'Network Error' o 'CORS' debería desaparecer si las funciones devuelven el encabezado CORS.
+            throw error; 
         }
     }
 
@@ -47,7 +50,6 @@ class HeroDAO {
             return response.data; // Retorna el objeto héroe
         } catch (error) {
             console.error(`Error fetching hero with id ${id}:`, error.response || error);
-            // Manejo específico del 404: devuelve null si no se encuentra
             if (error.response && error.response.status === 404) {
                 return null; 
             }
@@ -66,7 +68,6 @@ class HeroDAO {
             return response.data; // Retorna el héroe recién creado
         } catch (error) {
             console.error("Error creating hero:", error.response || error);
-            // Lanza un error genérico o con detalles del backend
             throw new Error(error.response?.data?.detail || error.message);
         }
     }
@@ -115,5 +116,5 @@ class HeroDAO {
     }
 }
 
-// Exporta una instancia para que todos los componentes compartan la misma lógica de acceso a datos
+// Exporta una instancia
 export default new HeroDAO();
