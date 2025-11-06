@@ -21,4 +21,5 @@ COPY --chown=app:app . .
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Usar Gunicorn, apuntando a tu módulo principal (core)
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]

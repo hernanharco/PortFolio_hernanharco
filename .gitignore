@@ -237,3 +237,6 @@ docs/_build/
 !**/index.html
 *storybook.log
 storybook-static
+
+# Local Netlify folder
+.netlify
