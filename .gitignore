@@ -42,7 +42,6 @@ out/
 # ========================
 # Docker
 # ========================
-docker-compose.override.yml
 *.swp
 *.swo
 
