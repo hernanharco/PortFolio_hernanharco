@@ -1,4 +1,7 @@
 services:
+  # ----------------------------------------------------
+  # SERVICIO 1: APLICACIÓN BACKEND (Conexion con XATA & DJANGO)
+  # ----------------------------------------------------
   backend:
     build:
       context: ./backend
@@ -14,7 +17,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     restart: unless-stopped
   # ----------------------------------------------------
-  # SERVICIO 1: APLICACIÓN PRINCIPAL (Modo Desarrollo/Vite)
+  # SERVICIO 2: APLICACIÓN PRINCIPAL (Modo Desarrollo/Vite)
   # ----------------------------------------------------
   frontend:
     build:
