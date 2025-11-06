@@ -1,5 +1,5 @@
 import React from 'react';
-import Hero from './Hero.jsx'; // Asegúrate que esta ruta sea correcta
+import Hero from './HeroSection.jsx'; // Asegúrate que esta ruta sea correcta
 
 // --- Mocks para dependencias ---
 

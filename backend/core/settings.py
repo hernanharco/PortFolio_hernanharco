@@ -7,10 +7,11 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.2/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/5.2/ref/settings/
+https://docs.djangoproject.com/en/5.2/ref/settings/#values
 """
 
 from pathlib import Path
+import os # Aseguramos que el módulo os esté importado al inicio
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,7 +43,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',     
+    'corsheaders.middleware.CorsMiddleware',      
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -65,11 +66,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-#Datos para hacer las conexiona a Docker, XARA y Render
-import os
+# Datos para hacer las conexiones a Docker, XATA y Render
 from urllib.parse import urlparse
 import dj_database_url
 
@@ -77,11 +74,21 @@ import dj_database_url
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-key-para-desarrollo')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# CORRECCIÓN: Leer DEBUG desde la variable de entorno y convertir a booleano
+DEBUG_STRING = os.getenv('DEBUG', 'True').lower()
+DEBUG = DEBUG_STRING in ('true', '1', 't', 'y')
 
-# Hosts Permitidos: Render te dará la URL (ej. tuapp.onrender.com)
-# Leemos la variable ALLOWED_HOSTS de Render y la separamos por comas
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+
+# Hosts Permitidos:
+# Lee los hosts de entorno, usando valores locales como fallback.
+# Esto previene el error 'DisallowedHost' en desarrollo.
+ALLOWED_HOSTS_RAW = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,backend').split(',')
+ALLOWED_HOSTS = [h.strip() for h in ALLOWED_HOSTS_RAW if h.strip()]
+
+# Si DEBUG es True, permitimos todos los hosts (Docker, 0.0.0.0, etc.)
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+
 
 # Database Configuration (XATA)
 DATABASE_URL = os.getenv('DATABASE_URL_POSTGRES')
@@ -92,7 +99,7 @@ if DATABASE_URL:
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
-            ssl_require=True # Para XATA, es fundamental (sslmode=require)
+            ssl_require=True # Para XATA, es fundamental
         )
     }
 else:
@@ -146,20 +153,28 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5175",   # ✅ Acceso desde el navegador en desarrollo
-    "http://frontend:5175",    # ✅ Acceso desde dentro de Docker (si es necesario)
-    "http://localhost:5173",   # ✅ Acceso desde el navegador en desarrollo
-    "http://frontend:5173",    # ✅ Acceso desde dentro de Docker (si es necesario)
+# --- LECTURA Y PROCESAMIENTO DE CORS ---
 
-    # Dominio de producción (Netlify)
-    os.getenv('FRONTEND_URL_NETLIFY'),
+# 1. Obtener la cadena de URLs separadas por comas
+CORS_URLS_STRING = os.getenv('FRONTEND_URLS_CORS', '') # Usamos un string vacío por defecto
+
+# 2. Dividir el string en una lista, eliminando entradas vacías/blancos
+# Esto previene el error 'corsheaders.E006' (CORS_ALLOWED_ORIGINS should be a sequence of strings)
+CORS_ALLOWED_ORIGINS = [
+    url.strip() 
+    for url in CORS_URLS_STRING.split(',') 
+    if url.strip()
 ]
 
-# Solo en desarrollo, pero ten cuidado en producción
-CORS_ALLOW_ALL_ORIGINS = False  # 🔒 Mejor desactivarlo y usar solo ALLOWED_ORIGINS
+# 3. Advertencia si está vacío (lo mantuviste y es útil)
+if not CORS_ALLOWED_ORIGINS:
+    print("WARNING: CORS_ALLOWED_ORIGINS está vacío. Revisa la variable FRONTEND_URLS_CORS.")     
 
-#Informacion agregada para que funcione la creacion de la documentacion
+# 4. En producción, siempre debe ser False.
+CORS_ALLOW_ALL_ORIGINS = False 
+
+
+# Información agregada para que funcione la creación de la documentación
 REST_FRAMEWORK = {
     # Tu configuración actual...
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',

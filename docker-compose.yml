@@ -1,0 +1,65 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend_harcoPortfolio
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/usr/src/app
+    working_dir: /usr/src/app
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: unless-stopped
+  # ----------------------------------------------------
+  # SERVICIO 1: APLICACIÓN PRINCIPAL (Modo Desarrollo/Vite)
+  # ----------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend_harcoPortfolio
+    ports:
+      - "5175:5173"
+    environment:
+      - VITE_API_URL=http://backend:8000
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    working_dir: /app
+    command: pnpm dev --host 0.0.0.0
+    restart: unless-stopped
+
+  # ----------------------------------------------------
+  # SERVICIO 3: docs con vitepress (Modo Estático/Producción con Nginx)
+  # ----------------------------------------------------
+  docs:
+    build:
+      context: ./docs
+      dockerfile: Dockerfile.doc
+    container_name: docs_harcoPortfolio
+    ports:
+      - "7173:80"     
+    restart: always
+
+  # ----------------------------------------------------
+  # SERVICIO 4: STORYBOOK (Modo Estático/Producción con Nginx)
+  # ----------------------------------------------------
+  storybook:
+    # Le indicamos que use el Dockerfile que construye y sirve Storybook estático
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.storybook
+    container_name: storybook_harcoPortfolio
+    # Mapeamos el puerto 6006 para acceder a Storybook
+    ports:
+      - "6006:80" # Mapea el puerto 6006 del host al puerto 80 del contenedor Nginx
+
+    # No necesita volúmenes de código fuente, solo se sirve el build.
+    restart: always

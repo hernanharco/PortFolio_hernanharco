@@ -42,6 +42,7 @@ out/
 # ========================
 # Docker
 # ========================
+docker-compose.override.yml
 *.swp
 *.swo
 
@@ -234,6 +235,7 @@ docs/_build/
 !**/vite.config.ts
 !**/tsconfig.json
 !**/index.html
+!docker-compose.yml
 *storybook.log
 storybook-static
 

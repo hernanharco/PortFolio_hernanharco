@@ -1,25 +1,45 @@
 # backend/Dockerfile
+
+# 1. Base: Utiliza la imagen slim de Python
 FROM python:3.11-slim
 
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    libpq-dev \
+## SECCIÓN 1: Dependencias del Sistema y Seguridad
+
+# 2. Configura e instala las dependencias de compilación para mysqlclient/psycopg2
+# Se usan los paquetes necesarios para compilar y se limpian los archivos de caché de apt
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    pkg-config \
+    default-libmysqlclient-dev \
+    # Si usas PostgreSQL, también necesitarás: libpq-dev
     && rm -rf /var/lib/apt/lists/*
 
-# Crear usuario no root
-RUN adduser --disabled-password --gecos '' app
-USER app
-WORKDIR /home/app
+# 3. Crea un usuario no-root por seguridad (Buenas Prácticas)
+RUN useradd --create-home app
+WORKDIR /home/app/app
 
-# Instalar dependencias de Python
-COPY --chown=app:app requirements.txt .
+## SECCIÓN 2: Dependencias de Python (Capa que cambia menos)
+
+# 4. Copiar requirements.txt y establecer propietario antes de instalar
+COPY requirements.txt .
+RUN chown app:app requirements.txt
+
+# 5. Cambiar a usuario no-root para las instalaciones
+USER app
+
+# 6. Instala las dependencias de Python (debe ir después del chown y el USER)
+# Se instala en el entorno virtual del usuario 'app' (ruta /home/app/.local)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar código
+## SECCIÓN 3: Código y Ejecución (Capa que cambia más a menudo)
+
+# 7. Copia todo el código del proyecto
 COPY --chown=app:app . .
 
+# 8. Expone el puerto
 EXPOSE 8000
 
-# Usar Gunicorn, apuntando a tu módulo principal (core)
+# 9. Comando de inicio (CMD), usando Gunicorn
+# Nota: La ruta de la aplicación debe ser correcta (core.wsgi:application)
 CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
