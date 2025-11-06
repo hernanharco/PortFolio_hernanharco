@@ -1,9 +1,10 @@
 // **Ubicación en el proyecto: frontend/src/components/hero/service/HeroDAO.js**
 
 import axios from 'axios';
+import { API_BASE_URL } from '@/config/apiConfig';
 
 // La URL base de tu API (ej: el endpoint de tu servicio backend)
-const API_BASE_URL = 'http://localhost:8001/api/hero'; 
+const HERO_API_URL = `${API_BASE_URL}/hero`;
 
 /**
  * Clase Data Access Object (DAO) para el recurso 'hero'.
@@ -14,7 +15,7 @@ class HeroDAO {
     constructor() {
         // Crea una instancia de axios con la URL base predefinida.
         this.api = axios.create({
-            baseURL: API_BASE_URL,
+            baseURL: HERO_API_URL,
             headers: {
                 'Content-Type': 'application/json',
                 // Ejemplo de Autenticación:
