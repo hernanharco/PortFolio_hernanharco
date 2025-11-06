@@ -4,11 +4,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '@/config/apiConfig';
 
 // La URL base de tu API (ej: el endpoint de tu servicio backend)
-<<<<<<< HEAD
-const API_BASE_URL = '/.netlify/functions/getProjects'; 
-=======
 const HERO_API_URL = `${API_BASE_URL}/hero`;
->>>>>>> harco
 
 /**
  * Clase Data Access Object (DAO) para el recurso 'hero'.

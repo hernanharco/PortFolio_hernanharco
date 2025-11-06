@@ -19,15 +19,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hp=tmw(oh2ug$y2i!_6*7i0o-zycx&x)u5gjuy^$m(dxa(6ma7'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -77,29 +68,35 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+#Datos para hacer las conexiona a Docker, XARA y Render
 import os
 from urllib.parse import urlparse
+import dj_database_url
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('SECRET_KEY', 'default-key-para-desarrollo')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+# Hosts Permitidos: Render te dará la URL (ej. tuapp.onrender.com)
+# Leemos la variable ALLOWED_HOSTS de Render y la separamos por comas
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+
+# Database Configuration (XATA)
 DATABASE_URL = os.getenv('DATABASE_URL_POSTGRES')
-if DATABASE_URL:
-    url = urlparse(DATABASE_URL)
-    db_name = url.path[1:]  # ✅ Correcto: toma toda la ruta como nombre de DB
 
+if DATABASE_URL:
+    # Usa dj_database_url para parsear la URL completa de XATA
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': db_name,
-            'USER': url.username,
-            'PASSWORD': url.password,
-            'HOST': url.hostname,
-            'PORT': url.port or 5432,
-            'OPTIONS': {
-                'sslmode': 'require',
-            },
-        }
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True # Para XATA, es fundamental (sslmode=require)
+        )
     }
 else:
-    # Fallback a SQLite (solo para desarrollo sin .env)
+    # Fallback a SQLite para desarrollo si no hay variable .env
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -154,6 +151,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://frontend:5175",    # ✅ Acceso desde dentro de Docker (si es necesario)
     "http://localhost:5173",   # ✅ Acceso desde el navegador en desarrollo
     "http://frontend:5173",    # ✅ Acceso desde dentro de Docker (si es necesario)
+
+    # Dominio de producción (Netlify)
+    os.getenv('FRONTEND_URL_NETLIFY'),
 ]
 
 # Solo en desarrollo, pero ten cuidado en producción
