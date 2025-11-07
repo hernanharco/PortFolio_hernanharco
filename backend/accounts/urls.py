@@ -5,8 +5,8 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register(r'hero', heroViewSet)
+router.register(r'heroes', heroViewSet)
 
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 ]
