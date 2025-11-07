@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '@/config/apiConfig';
 
 // La URL base de tu API (ej: el endpoint de tu servicio backend)
-const HERO_API_URL = `${API_BASE_URL}/hero`;
+const HERO_API_URL = `${API_BASE_URL}/heroes`;
 
 /**
  * Clase Data Access Object (DAO) para el recurso 'hero'.
