@@ -7,11 +7,11 @@ import UpdateButton from "@/components/ui/UpdateButton.jsx";
 const HeroSection = () => {
 	// 1. Desestructurar todos los estados, fetchHeroes, y updateHero
 	const { heroes, isLoading, error, separator, namePart, fetchHeroes, updateHero } = useHero();
-
+	
 	// 2. Extraer los datos y el ID del primer héroe
 	const heroData = heroes.length > 0 ? heroes[0] : null;
-	const heroId = heroData?.id; 
-
+	const heroId = heroData?.id; 	
+	
 	// --- Estados para la Edición ---
 	const [isEditing, setIsEditing] = useState(false);
 	const [formData, setFormData] = useState({});
