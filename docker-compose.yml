@@ -45,7 +45,7 @@ services:
   docs:
     build:
       context: ./docs
-      dockerfile: Dockerfile.doc
+      dockerfile: Dockerfile
     container_name: docs_harcoPortfolio
     ports:
       - "7173:80"     

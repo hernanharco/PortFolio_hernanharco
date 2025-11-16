@@ -30,15 +30,15 @@ const Contact = () => {
     {
       icon: <Mail className="w-6 h-6" />,
       title: "Email",
-      value: "hernan.arango@email.com",
-      link: "mailto:hernan.arango@email.com",
+      value: "hernan.harco@gmail.com",
+      link: "mailto:hernan.harco@gmail.com",
       color: "bg-blue-500"
     },
     {
       icon: <Phone className="w-6 h-6" />,
       title: "Teléfono",
-      value: "+34 XXX XXX XXX",
-      link: "tel:+34XXXXXXXXX",
+      value: "+34 634405549",
+      link: "tel:+34634405549",
       color: "bg-green-500"
     },
     {
@@ -51,8 +51,8 @@ const Contact = () => {
     {
       icon: <Linkedin className="w-6 h-6" />,
       title: "LinkedIn",
-      value: "linkedin.com/in/hernan-arango",
-      link: "https://linkedin.com/in/hernan-arango",
+      value: "linkedin.com/in/hernan-harco",
+      link: "https://www.linkedin.com/in/hernan-harco/",
       color: "bg-blue-600"
     }
   ];
@@ -195,6 +195,7 @@ const Contact = () => {
                     key={index}
                     href={info.link}
                     className="flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group"
+                    target="_blank"
                   >
                     <div className={`${info.color} p-3 rounded-lg mr-4 text-white group-hover:scale-110 transition-transform`}>
                       {info.icon}

@@ -1,10 +1,16 @@
 # 🏷️ Convenciones de Nomenclatura (Naming)
 La consistencia en la nomenclatura es vital para la legibilidad y el mantenimiento del código. Estas convenciones se aplican a todas las carpetas, archivos, componentes y variables del proyecto, especialmente en la capa de frontend.
 
-```text
+
 ## 🏷️ Convenciones de Nomenclatura (Naming)
 
-La consistencia en la nomenclatura es vital para la legibilidad y el mantenimiento del código. Estas convenciones se aplican a todas las carpetas, archivos, componentes y variables del proyecto, especialmente en la capa de *frontend*.
+La consistencia en la nomenclatura es vital para la legibilidad y 
+el mantenimiento del código. 
+Estas convenciones se aplican a 
+todas las carpetas, archivos, componentes y variables del proyecto, 
+especialmente en la 
+capa de *frontend*.
+
 
 ---
 
@@ -67,12 +73,12 @@ La consistencia en la nomenclatura es vital para la legibilidad y el mantenimien
 
 ### 4. `docs/guide/structure.md`
 
-```markdown
+
 # Estructura de Directorios: Por Característica
 
 Todos los archivos relacionados con una característica (ejemplo: Hero) se agrupan en una sola carpeta bajo `src/components/`.
 
-```text
+```markdown
 src/
 └── components/
     └── hero/
