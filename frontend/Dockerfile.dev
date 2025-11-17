@@ -1,23 +1,28 @@
-# Imagen base ligera con Node 20
-FROM node:20-slim
+# =========================
+# ETAPA DE DEPENDENCIAS
+# =========================
+FROM node:20-slim AS deps
 
-# Setea el directorio de trabajo
 WORKDIR /app
 
-# Instala pnpm globalmente
 RUN npm install -g pnpm
 
-# Copia los archivos de dependencias y lockfile
-COPY package.json pnpm-lock.yaml ./
+# Solo copiar archivos de dependencias
+COPY package.json pnpm-lock.yaml* ./
 
-# Instala dependencias
 RUN pnpm install --frozen-lockfile
 
-# Copia el resto del código fuente
-COPY . .
+# =========================
+# ETAPA FINAL PARA DESARROLLO
+# =========================
+FROM node:20-slim AS final
 
-# Expone el puerto de Vite
+WORKDIR /app
+
+# Copiamos node_modules pero NO copiamos el código del host
+COPY --from=deps /app/node_modules ./node_modules
+
+# El código vendrá montado por docker-compose con volumes
 EXPOSE 5173
 
-# Comando de desarrollo con host accesible desde Docker
-CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]
+CMD ["pnpm", "dev", "--host", "0.0.0.0"]
