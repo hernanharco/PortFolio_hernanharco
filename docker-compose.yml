@@ -31,12 +31,12 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app:cached
       - /app/node_modules
     depends_on:
       - backend
     working_dir: /app
-    command: pnpm dev --host 0.0.0.0
+    command: ["pnpm", "dev"]
     restart: unless-stopped
 
   # ----------------------------------------------------
