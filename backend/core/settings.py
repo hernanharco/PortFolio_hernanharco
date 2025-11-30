@@ -2,14 +2,17 @@
 Django settings for core project.
 """
 
-from pathlib import Path
 import os
-from urllib.parse import urlparse
-import dj_database_url
+from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()  # cargar .env
+#from urllib.parse import urlparse #Descomponer una url
+import dj_database_url #se utiliza para la creacion de la base de datos
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+AUTHCENTER_JWT_SECRET = os.getenv("AUTHCENTER_JWT_SECRET", "cambia_esto_en_produccion")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -49,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'accounts',
+    'authUsers'
 ]
 
 MIDDLEWARE = [
@@ -64,6 +68,7 @@ MIDDLEWARE = [
     # 4. Resto de middlewares
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    "authUsers.middleware.BearerAuthMiddleware", 
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -169,6 +174,9 @@ CORS_ALLOWED_ORIGINS = [
     for url in CORS_URLS_STRING.split(',') 
     if url.strip()
 ]
+
+CORS_ALLOW_HEADERS = ["authorization", "content-type"]
+CORS_ALLOW_CREDENTIALS = True
 
 # 3. Advertencia si está vacío (útil para recordar configurar la variable en Render)
 if not CORS_ALLOWED_ORIGINS and not DEBUG:

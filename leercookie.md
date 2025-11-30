@@ -1,4 +1,4 @@
-✅ PROMPT FINAL COMPLETO
+✅ PROMPT FINAL COMPLETO (ACTUALIZADO CON BEARER TOKEN)
 
 Quiero que generes una guía extremadamente detallada y paso a paso para lo siguiente:
 
@@ -17,33 +17,44 @@ refreshToken
 
 El sistema de autenticación ya funciona perfectamente y no necesita ser modificado.
 
-Ahora necesito integrar esto con otro proyecto llamado portfolio_hernanharco, que tiene:
+🚨 Cambio importante en la arquitectura
 
-Backend en Django
+Quiero que tomes en cuenta que, cuando estos proyectos estén desplegados en servidores diferentes (por ejemplo Vercel, Netlify, Railway, Render, etc.), no es posible utilizar cookies cross-site entre dominios distintos.
 
-Frontend en Vite
+Por lo tanto decidí usar una arquitectura donde el portfolio_hernanharco utilizará Bearer Token para comunicarse con el backend Django.
 
-Lo que necesito es que el proyecto Django pueda leer la cookie authToken enviada por authcenter, decodificarla y obtener el campo role para saber qué rol tiene el usuario autenticado en el proyecto authcenter.
+❗ Nuevo flujo de autenticación:
 
-Para esto quiero crear una nueva app en Django llamada authUsers, y dentro de ella todas las clases, middlewares y utilidades necesarias.
+authcenter genera el JWT (authToken).
 
-❗ Requisitos del trabajo
+El frontend de portfolio_hernanharco recibe ese token (vía redirección, localStorage o query param).
+
+Cada request al backend Django se enviará con:
+
+Authorization: Bearer <authToken>
+
+
+Django decodifica el JWT y extrae el role.
+
+Este enfoque funciona en cualquier proveedor de hosting, sin importar si cada servicio está en dominios completamente distintos.
+
+📌 LO QUE NECESITO QUE GENERES
 
 Quiero que me entregues un documento paso a paso con:
 
 1. Estructura completa de la app Django authUsers
 
-Con sus archivos totalmente escritos, en texto plano, sin canvas:
+Con sus archivos totalmente escritos en texto plano (sin canvas):
 
 apps.py
 
 models.py
 
-token_utils.py
+token_utils.py (para validar el Bearer Token)
 
-middleware.py
+middleware.py (para extraer el token desde Authorization header)
 
-views.py
+views.py (endpoint para devolver role)
 
 urls.py
 
@@ -55,87 +66,102 @@ Cambios necesarios en urls.py principal
 
 requirements.txt
 
-Todas las clases deben ser completas y bien comentadas, con explicaciones claras en cada bloque.
+Todas las clases deben ser completas y bien comentadas.
 
 2. Explicación completa del proceso
 
-Quiero que me expliques paso a paso cómo funciona:
+Quiero una explicación detallada de:
 
-Cómo Django recibe y lee la cookie authToken
+Cómo el frontend del portfolio obtiene el token de authcenter.
 
-Cómo validar y decodificar el JWT (firmado con HS256)
+Cómo Django recibe el token desde el header Authorization.
 
-Cómo extraer el campo role
+Cómo validar y decodificar el JWT (HS256).
 
-Cómo inyectar la información del usuario en request.auth_user
+Cómo extraer el campo role.
 
-Cómo exponer un endpoint GET /api/auth/role/ que devuelva { role: "<rol>" }
+Diferencias entre validación local y validación remota (introspection endpoint).
 
-Cómo configurar CORS y cookies
+Cómo configurar CORS para permitir envío de Authorization header.
 
-Cómo manejar HttpOnly, SameSite, domain, secure
+Cómo consumir la API desde el frontend Vite (fetch con Authorization).
 
-Qué configuración debe existir en authcenter para que Django pueda leer la cookie (solo explicación, nada debe cambiar en authcenter)
+Cómo manejar tokens expirados y refresh tokens.
 
-Cómo consumir esa API desde el frontend Vite (fetch con credentials: "include")
+3. Pruebas en Postman
 
-3. PRUEBAS EN POSTMAN
+Quiero una sección completa indicando:
 
-Agregar una sección completa sobre:
+Cómo llamar al endpoint de Django enviando el header:
 
-Cómo probar correctamente en Postman que Django está leyendo la cookie authToken
+Authorization: Bearer <token>
 
-Cómo enviar la cookie en la pestaña "Cookies" de Postman
 
-Cómo validar las respuestas desde Postman
+Cómo probar respuestas válidas e inválidas.
 
-Cómo identificar errores comunes (cookie no enviada, dominio incorrecto, SameSite, etc.)
+Cómo simular token expirado.
+
+Errores comunes:
+
+Falta de header
+
+Token malformado
+
+Token con firma incorrecta
+
+Token manipulado
 
 4. Pruebas unitarias
 
-Añadir tests.py:
+Debe incluir tests.py con:
 
-Test para la decodificación del token
+Test para validación del JWT.
 
-Test para la API /api/auth/role/
+Test para el middleware que extrae el Bearer Token.
 
-Test para verificar que el middleware funciona
+Test para el endpoint /api/auth/role/.
 
-5. Ejemplo de flujo completo
+Test para token inválido, firma incorrecta y expirado.
 
-Mostrar un escenario de prueba:
+5. Flujo completo de funcionamiento
+
+Quiero un ejemplo explicado paso a paso:
 
 Usuario inicia sesión en authcenter.
 
-authcenter genera cookies.
+authcenter genera el authToken.
 
-Usuario abre portfolio_hernanharco.
+portfolio_hernanharco recibe ese token.
 
-portfolio hace request a Django.
+El frontend de portfolio hace una petición GET a Django:
 
-Django decodifica token y devuelve el rol.
+Authorization: Bearer <token>
 
-Frontend Vite muestra información basada en el rol.
 
-6. Advertencias y buenas prácticas
+Django valida y obtiene el rol.
 
-Quiero que incluyas:
+Frontend muestra contenido basado en el rol.
 
-Qué pasa si la cookie está marcada como HttpOnly
+6. Buenas prácticas y advertencias
 
-Qué hacer si en el futuro se cambia a RS256
+Incluir detalles sobre:
 
-Qué pasa si el token es opaco y requiere validación servidor a servidor
+Por qué las cookies no funcionan cross-domain en producción.
+
+Por qué la arquitectura Bearer Token sí funciona ilimitadamente entre dominios distintos.
+
+Qué hacer si en el futuro se migra a RS256.
+
+Qué pasa si los tokens pasan a ser opacos (requieren introspección).
+
+Seguridad al almacenar tokens en localStorage vs cookies HttpOnly.
 
 ❗ Formato requerido
 
-Todo debe entregarse en archivos planos (texto simple).
+Toda la respuesta debe estar en texto plano, sin canvas.
 
-No quiero ningún contenido en canvas.
+No debe faltar ningún archivo.
 
-No debe haber archivos faltantes.
+Todo debe estar completamente explicado y listo para copiar/pegar.
 
-Quiero toda la implementación totalmente lista para copiar y pegar.
-
-___________________
-
+___
