@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # --- Database Configuration (XATA) ---
 # Lee de la variable de entorno 'DATABASE_URL_POSTGRES'
 DATABASE_URL = os.getenv('DATABASE_URL_POSTGRES')
-print ("DATABASE_URL: ", DATABASE_URL)
+#print ("DATABASE_URL: ", DATABASE_URL)
 
 if DATABASE_URL:
     # Usa dj_database_url para parsear la URL completa de XATA
@@ -166,7 +166,7 @@ STORAGES = {
 
 # 1. Obtener la cadena de URLs separadas por comas desde la variable de entorno
 CORS_URLS_STRING = os.getenv('FRONTEND_URLS_CORS', '')
-print ("CORS_URLS_STRING: ", CORS_URLS_STRING)
+#print ("CORS_URLS_STRING: ", CORS_URLS_STRING)
 
 # 2. Dividir el string en una lista de orígenes permitidos
 CORS_ALLOWED_ORIGINS = [

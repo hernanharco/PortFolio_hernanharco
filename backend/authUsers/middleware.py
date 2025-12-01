@@ -1,38 +1,62 @@
 from django.utils.deprecation import MiddlewareMixin
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 from django.conf import settings
 import jwt
+import sys
 
+# La clase Middleware debe heredar de MiddlewareMixin para compatibilidad
 class BearerAuthMiddleware(MiddlewareMixin):
     """
-    Middleware para extraer el token desde el header Authorization:
-        Authorization: Bearer <token>
+    Middleware unificado para manejar la autenticación JWT.
+    Prioriza el token de la cookie HttpOnly ('authToken') y, si no lo encuentra,
+    busca en el encabezado 'Authorization: Bearer <token>'.
     
-    Decodifica el JWT usando AUTHCENTER_JWT_SECRET y expone:
-        request.auth_user = {"payload": payload, "role": role}
-    
-    Si el token es inválido o no se proporciona, auth_user = None
+    Expone: request.auth_user = {"payload": payload, "role": role}
     """
 
+    # Posibles claves donde se almacena el rol en el payload JWT
     ROLE_KEYS = ["role", "roles", "user_role", "userRoles"]
 
     def process_request(self, request: HttpRequest):
+        # Inicializa el usuario de la petición a None
         request.auth_user = None
-        auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+        token = None
+        source = "None"
         
-        # Log opcional para debugging
-        print("HTTP_AUTHORIZATION:", auth_header)
+        # 1. 🥇 Prioridad: Intentar obtener el token de la cookie HttpOnly
+        # Esto requiere que CORS_ALLOW_CREDENTIALS=True esté en settings.py
+        token = request.COOKIES.get("authToken")
+        if token:
+            source = "Cookie"
+            
+        # 2. 🥈 Alternativa: Si no está en la cookie, buscar en el encabezado Bearer (para clientes API)
+        if not token:
+            auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+            if auth_header.startswith("Bearer "):
+                token = auth_header.split("Bearer ")[1].strip()
+                source = "Bearer Header"
 
-        if not auth_header.startswith("Bearer "):
-            return
-
-        token = auth_header.split("Bearer ")[1].strip()
+        # --- Logging para Depuración (Muestra de dónde vino el token) ---
+        print("-" * 50)
+        print(f"Request path: {request.path}")
+        print(f"Token Found in: {source}")
+        if source != "None":
+            print(f"Token Preview: {token[:15]}...")
+        else:
+            print("Token Preview: None")
+        print("-" * 50)
+        
+        # Si no se encontró el token en ninguno de los lugares, salimos.
         if not token:
             return
 
+        # --- Lógica de Decodificación y Verificación ---
         try:
-            # Decodifica JWT usando el secreto y HS256
-            # options={"verify_aud": False} para evitar error de audiencia
+            # Verifica que la clave secreta esté configurada
+            if not settings.AUTHCENTER_JWT_SECRET:
+                raise ValueError("AUTHCENTER_JWT_SECRET no está configurado.")
+
+            # Decodifica JWT
             payload = jwt.decode(
                 token,
                 settings.AUTHCENTER_JWT_SECRET,
@@ -48,16 +72,24 @@ class BearerAuthMiddleware(MiddlewareMixin):
                     if isinstance(role_value, list):
                         role_value = role_value[0] if role_value else None
                     break
-
+            
+            # Asignación de auth_user (Éxito)
             request.auth_user = {"payload": payload, "role": role_value}
 
-            # Log opcional para debugging
-            print("Payload decodificado:", payload)
-            print("Rol detectado:", role_value)
-
+            # Log de éxito (Se usa sys.stderr para asegurar la impresión)
+            sys.stderr.write(f"✅ Auth Success: Role={role_value} (Source: {source})\n")
+            
         except jwt.ExpiredSignatureError:
-            print("Token expirado")
+            sys.stderr.write("❌ Token expirado.\n")
+            # Podrías devolver JsonResponse({"message": "Token expirado."}, status=401)
+        
         except jwt.InvalidSignatureError:
-            print("Firma inválida")
+            sys.stderr.write("❌ Firma JWT inválida.\n")
+            # Podrías devolver JsonResponse({"message": "Token inválido."}, status=403)
+
         except Exception as e:
-            print("Error al decodificar token:", str(e))
+            sys.stderr.write(f"❌ Error interno al decodificar token: {type(e).__name__} - {str(e)}\n")
+            # Podrías devolver JsonResponse({"message": "Error de autenticación."}, status=500)
+        
+        # Si la decodificación fue exitosa, el middleware continua el proceso hacia la vista.
+        return None # Devuelve None para continuar con la petición normal
