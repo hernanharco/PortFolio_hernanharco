@@ -1,6 +1,6 @@
 import Navigation from '@/components/Navigation'
 import Hero from '@/hero/components/HeroContainer'
-import About from '@/components/sections/About'
+import About from '@/about/components/About';
 import Skills from '@/components/sections/Skills'
 import Projects from '@/components/sections/Projects'
 import Experience from '@/components/sections/Experience'
