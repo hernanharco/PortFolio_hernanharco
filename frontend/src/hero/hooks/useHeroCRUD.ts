@@ -15,7 +15,7 @@ import type { UseHeroReturn } from "@/hero/types/UseHeroReturn";
  *
  * @returns UseHeroReturn - Objeto con estados y funciones para usar en componentes.
  */
-const useHero = (): UseHeroReturn => {
+const useHeroCRUD = (): UseHeroReturn => {
   // --- Estado principal ---
   // Lista de héroes obtenida desde la API
   const [heroes, setHeroes] = useState<Hero[]>([]);
@@ -162,4 +162,4 @@ const useHero = (): UseHeroReturn => {
   };
 };
 
-export default useHero;
+export default useHeroCRUD;

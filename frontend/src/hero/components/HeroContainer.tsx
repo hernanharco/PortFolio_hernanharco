@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
-import useHero from "@/hero/hooks/useHeroCRUD";
+import useHeroCRUD from "@/hero/hooks/useHeroCRUD";
 import { useAuth } from "@/context/AuthContext";
 import HeroView from "./HeroView";
 
@@ -26,7 +26,7 @@ const HeroContainer: React.FC = () => {
     namePart,
     fetchHeroes,
     updateHero,
-  } = useHero();
+  } = useHeroCRUD();
 
   // Héroe principal
   const heroData: Hero | null = heroes.length > 0 ? heroes[0] : null;

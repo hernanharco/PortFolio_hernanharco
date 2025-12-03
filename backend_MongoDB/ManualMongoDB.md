@@ -406,11 +406,11 @@ dotenv.config();
 
 const app = express();
 
-app.use('/about', aboutRoutes);
-app.use('/skills', skillsRoutes);
-
 // Middlewares
 app.use(express.json());
+
+app.use('/about', aboutRoutes);
+app.use('/skills', skillsRoutes);
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI)
