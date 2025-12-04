@@ -2,7 +2,9 @@
 // Asegúrate de que estos tipos reflejen tu modelo de Mongoose (title, description)
 
 export interface HighlightItem{
+    id: number;
     image: string;
+    color: string;
     title: string;
     text: string;
 }
@@ -16,7 +18,7 @@ export interface AboutData {
     storycontent2: string;
     storycontent3: string;
     // ⭐ CAMBIO: Ahora es un array de HighlightItem
-    Highlights: HighlightItem[];
+    highlights: HighlightItem[];
     __v?: number;
 }
 

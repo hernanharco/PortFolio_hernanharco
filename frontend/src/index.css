@@ -80,3 +80,66 @@
     font-family: system-ui, sans-serif;
   }
 }
+
+/* Estilos en App.css o tu archivo de estilos */
+
+/* App.css (o donde manejes tus estilos globales) */
+
+/* --- 1. Estilos del Overlay (Fondo y Centrado) --- */
+.modal-overlay {
+  position: fixed; /* Fija la posición en la ventana (no se mueve con el scroll) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7); /* Color negro semitransparente (oscurece el contenido de atrás) */
+  
+  /* Flexbox para centrar el contenido */
+  display: flex; 
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  
+  z-index: 1000; /* Asegura que esté por encima de todos los demás elementos */
+  overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+}
+
+/* --- 2. Estilos del Contenido del Modal --- */
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  margin: 10px; /* Pequeño margen para evitar que toque los bordes en móviles */
+}
+
+/* --- 3. Estilos del Encabezado y Botón de Cierre --- */
+.modal-header {
+  display: flex;
+  justify-content: space-between; /* Alinea el título y el botón de cierre */
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1; 
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #333;
+}

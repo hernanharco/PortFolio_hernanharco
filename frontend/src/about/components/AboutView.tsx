@@ -28,7 +28,7 @@ const AboutView: React.FC<AboutViewProps> = ({ currentAbout, abouts }) => {
           />        
           
           {/* Key Highlights */}
-          <div className="space-y-6">
+          <div>
             <KeyHighlightsView
             currentAbout={currentAbout}
             abouts={abouts}

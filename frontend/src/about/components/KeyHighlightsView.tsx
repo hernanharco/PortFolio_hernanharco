@@ -1,105 +1,133 @@
 import { Users, Target, Plane, Code2 } from "lucide-react";
 import { AboutData, HighlightItem } from "../types/AboutData";
 import StyledIconWrapper from "./StyledIconWrapper";
+import Modal from '../../components/ui/Modal';
+import { useState } from "react";
+import HighlightsModal from "./modal/HighlightsModal";
 
 export interface KeyHighlightsViewProps {
   abouts: AboutData[] | null;
   currentAbout: AboutData | null;
+  
 }
 
 const KeyHighlightsView: React.FC<KeyHighlightsViewProps> = ({
   currentAbout,
-  abouts,
+  abouts,  
 }) => {
-  const hasData = abouts && abouts.length > 0;
+  const hasData = abouts && abouts.length > 0;  
 
   if (!hasData) {
     return null;
   }
 
   let highlights: HighlightItem[] = [];
-  const highlightsData = abouts[0].Highlights;
+  const highlightsData = abouts[0].highlights;
 
-  // ⭐ LÓGICA CORREGIDA PARA MANEJAR ARRAY DE STRINGS
+  /// ✅ LÓGICA CORREGIDA Y LIMPIA PARA DATOS NATIVOS DE MONGOOSE
   if (Array.isArray(highlightsData) && highlightsData.length > 0) {
-    // Accede al primer elemento (que es el string JSON)
-    const jsonString = highlightsData[0];
-
-    if (typeof jsonString === "string") {
-      try {
-        // Parsea el string para obtener el array de objetos real
-        highlights = JSON.parse(jsonString) as HighlightItem[];
-      } catch (e) {
-        console.error(
-          "Error al parsear el string JSON de Highlights. Revisa el formato de la DB.",
-          e
-        );
-        highlights = [];
-      }
-    }
-  } else if (Array.isArray(highlightsData)) {
-    // Caso ideal: si es un array de objetos directamente (solución permanente en DB)
+    // Si la DB ya almacena un array de objetos (el formato Mongoose ideal),
+    // lo usamos directamente sin ningún parsing.
     highlights = highlightsData as HighlightItem[];
+  } else {
+    // Si highlightsData no es un array o está vacío, highlights queda como []
+    highlights = [];
   }
 
+  // O una versión más concisa:
+  // highlights = Array.isArray(highlightsData) ? (highlightsData as HighlightItem[]) : [];
+
   // Si la data no tiene items, no renderiza la sección dinámica.
-  // console.log("Highlights finales a mostrar:", highlights); // Puedes dejar esto para verificar
+  //console.log("Highlights finales a mostrar:", highlights);  
+  const highlightColor = highlights[0].color;
+
+  // 1. Estado para controlar el modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  // 2. Nueva función para manejar las acciones de la tabla
+  const handleHighlightAction = (id: number, action: 'add' | 'remove') => {
+      // Implementa la lógica CRUD aquí (Crear o Eliminar un Highlight)
+      console.log(`Acción '${action}' solicitada para el Highlight ID: ${id}`);
+      // Ejemplo: si es 'add', podrías abrir un formulario para crear uno nuevo.
+      // si es 'remove', podrías llamar a una API para eliminarlo.
+  };
 
   return (
-    <div>
-      {/* --- SECCIÓN DE HIGHLIGHTS DINÁMICOS --- */}
-      <div>
-        {highlights.length > 0 && ( // Ahora 'highlights' es un array de objetos real
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-            {/* ... El resto de tu mapeo está bien, porque 'item' ahora es un objeto HighlightItem */}
-            {highlights.map((item: HighlightItem, index: number) => (
-              <div key={index} className="p-4 border rounded-lg shadow-sm">
-                {/* IMAGEN */}
-                {item.image && (
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-32 object-cover rounded-md mb-4"
-                  />
-                )}
-                {/* Ejemplo de cómo cambiar el tamaño y el color */}
-                {/* Contenedor de ícono estilizado */}
-                <div className="flex items-start space-x-4">
-                  {/* Reemplazado el div manual y el icono <Users /> por StyledIconWrapper */}
-                  <StyledIconWrapper
-                    source='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>'
-                    iconWidth={32}
-                    iconHeight={40}
-                    className="bg-blue-600 p-3"
-                    iconClassName="w-6 h-6 text-white"
-                  />
-                  <div>
-                    {/* Contenido del Ítem 1 */}
-                    <h3>Titulo del Item 1</h3>
-                    <p>Texto del Item 1</p>
-                  </div>
-                </div>
+    
+    <div className="space-y-6">
 
-                {/* TÍTULO */}
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  {item.title}
-                </h3>
-                {/* TEXTO */}
-                <p className="text-gray-600">{item.text}</p>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* -------------------------------------- */}
+      {/* --- BOTÓN PARA ABRIR EL MODAL (NUEVO) --- */}
+      {/* -------------------------------------- */}
+      <div className="mt-4 flex justify-center">
+        <button
+          onClick={handleOpenModal} // ⬅️ Llama a la función para abrir
+          className="px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+        >
+          Abrir Panel de Detalles
+        </button>
       </div>
+
+      {/* ----------------------------------- */}
+      {/* --- EL COMPONENTE MODAL (NUEVO) --- */}
+      {/* ----------------------------------- */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal} // ⬅️ Llama a la función para cerrar
+        title={"Creacion de Highlights"}
+      >
+        
+        <p className="text-gray-700 mb-4">          
+          <HighlightsModal
+            data={highlights} 
+            onActionClick={handleHighlightAction} // Usamos la nueva función
+        />        
+        </p>
+        <button
+          onClick={handleCloseModal}
+          className="mt-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+        >
+          Cerrar
+        </button>
+      </Modal>
+    
+
+      {/* --- SECCIÓN DE HIGHLIGHTS DINÁMICOS --- */}
+
+      <div className={`bg-gradient-to-br from-${highlightColor}-50 to-indigo-50 p-6 rounded-xl`}>
+        <div className="flex items-start space-x-4">
+          <StyledIconWrapper
+            source={highlights[0].image}
+            iconWidth={24}
+            iconHeight={24}
+            // 💡 CAMBIO CLAVE: Usamos p-2 para hacerlo más compacto (como el verde)
+            className={`bg-${highlightColor}-600 p-3 rounded-lg`}
+            iconClassName="w-6 h-6 text-white"
+          />
+
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              {highlights[0].title}
+            </h4>
+            <p className="text-gray-700">
+              {highlights[0].text}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* --- SECCIÓN DE HIGHLIGHTS  --- */}
 
       <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl">
         <div className="flex items-start space-x-4">
           <StyledIconWrapper
-            source='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-target-icon lucide-target"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>'
+            source='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>'
             iconWidth={24}
             iconHeight={24}
             // 💡 CAMBIO CLAVE: Usamos p-2 para hacerlo más compacto (como el verde)
-            className="bg-green-600 p-3 rounded-lg"
+            className="bg-blue-600 p-3 rounded-lg"
             iconClassName="w-6 h-6 text-white"
           />
 
