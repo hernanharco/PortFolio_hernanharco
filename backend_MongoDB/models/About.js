@@ -6,6 +6,7 @@ const highlightItemSchema = new mongoose.Schema({
   image: { type: String, required: true },
   // Incluimos 'color' que estaba en tu objeto de ejemplo
   color: { type: String }, 
+  secondcolor: { type: String },
   title: { type: String, required: true },
   text: { type: String, required: true },
 }, { _id: false }); 

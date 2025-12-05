@@ -14,7 +14,7 @@ const app = express();
 // 1. Define los orígenes permitidos
 // Debes especificar el dominio y puerto exacto donde se ejecuta tu frontend (React/Vite)
 const allowedOrigins = [
-    'http://localhost:5173', // Tu frontend de desarrollo
+    'http://localhost:5174', // Tu frontend de desarrollo
     // 'https://tudominio-frontend.com', // Si ya tienes un dominio de producción
 ];
 

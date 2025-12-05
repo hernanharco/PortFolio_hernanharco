@@ -1,5 +1,5 @@
 import React from "react";
-import { AboutData } from "../types/AboutData";
+import { AboutData } from "@/features/about/types/AboutData";
 
 export interface AboutHeaderViewProps {
   currentAbout: AboutData | null;

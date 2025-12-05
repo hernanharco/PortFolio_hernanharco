@@ -1,10 +1,10 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
-import useHeroCRUD from "@/hero/hooks/useHeroCRUD";
+import useHeroCRUD from "@/features/hero/hooks/useHeroCRUD";
 import { useAuth } from "@/context/AuthContext";
 import HeroView from "./HeroView";
 
 // Tipos
-import type { Hero, HeroInput } from "@/hero/types/HeroData";
+import type { Hero, HeroInput } from "@/features/hero/types/HeroData";
 
 /**
  * HeroContainer

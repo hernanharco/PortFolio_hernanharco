@@ -1,17 +1,18 @@
 
-import { AboutData } from "../types/AboutData";
+import { AboutData } from "../../types/AboutData";
 
 //Vistas de About
-import AboutHeaderView from "./AboutHeaderView";
-import StoryContentView from "./StoryContentView";
-import KeyHighlightsView from "./KeyHighlightsView";
+import AboutHeaderView from "../About/views/AboutHeaderView";
+import StoryContentView from "../About/views/StoryContentView";
+import KeyHighlightsView from "../About/views/KeyHighlightsView";
 
 export interface AboutViewProps {
   currentAbout: AboutData | null;
   abouts: AboutData[] | null;
+  fetchAll : () => Promise<void>;
 }
 
-const AboutView: React.FC<AboutViewProps> = ({ currentAbout, abouts }) => {
+const AboutView: React.FC<AboutViewProps> = ({ currentAbout, abouts, fetchAll }) => {
   
   return (
     <section id="about" className="py-20 bg-white">
@@ -30,8 +31,9 @@ const AboutView: React.FC<AboutViewProps> = ({ currentAbout, abouts }) => {
           {/* Key Highlights */}
           <div>
             <KeyHighlightsView
-            currentAbout={currentAbout}
-            abouts={abouts}
+              currentAbout={currentAbout}         
+              abouts={abouts}
+              fetchAllAbouts={fetchAll}
             />            
           </div>
         </div>

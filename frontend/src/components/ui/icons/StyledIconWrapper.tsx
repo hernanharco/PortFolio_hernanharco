@@ -22,14 +22,14 @@ const StyledIconWrapper: React.FC<StyledIconProps> = ({
 
   return (
     <div className={`${baseClasses} ${className}`}>
-                       {" "}
+      
       <DynamicIcon
         source={source} // 💡 CAMBIO CLAVE: Pasamos width y height separados
         width={iconWidth}
         height={iconHeight}
         className={iconClassName}
       />
-                   {" "}
+      
     </div>
   );
 };

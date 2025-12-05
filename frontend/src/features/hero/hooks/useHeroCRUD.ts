@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import HeroDAO from "@/hero/service/HeroDAO.js";
+import HeroDAO from "@/features/hero/service/HeroDAO.js";
 import TextSplitter from "@/utils/TextSplitter";
 
 // Tipos importados desde nuestros archivos de tipos
-import type { Hero, HeroInput, ErrorType } from "@/hero/types/HeroData";
-import type { UseHeroReturn } from "@/hero/types/UseHeroReturn";
+import type { Hero, HeroInput, ErrorType } from "@/features/hero/types/HeroData";
+import type { UseHeroReturn } from "@/features/hero/types/UseHeroReturn";
 
 /**
  * Custom Hook para manejar héroes en la aplicación.

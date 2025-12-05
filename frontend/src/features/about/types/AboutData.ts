@@ -5,6 +5,7 @@ export interface HighlightItem{
     id: number;
     image: string;
     color: string;
+    secondcolor: string;
     title: string;
     text: string;
 }
