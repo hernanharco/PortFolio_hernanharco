@@ -1,20 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import useAboutCRUD from "@/features/about/hooks/useAboutCRUD";
 import AboutView from "./AboutView";
 
 const AboutContainer = () => {
-  const { currentAbout, abouts, fetchAll } = useAboutCRUD();
+    // Desestructuramos las operaciones CRUD y el estado
+    const { currentAbout, abouts, fetchAll } = useAboutCRUD();
 
-  // 1. 🚀 Llama a fetchAll cuando el componente se monta
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]); // El useCallback asegura que fetchAll no cambie innecesariamente
-
-  return <AboutView 
-    currentAbout={currentAbout} 
-    abouts={abouts} 
-    fetchAll={fetchAll}
-    />;
+    // 1. Llama a fetchAll cuando el componente se monta
+    useEffect(() => {
+        fetchAll();
+    }, [fetchAll]);    
+    
+    return (
+        <AboutView 
+            currentAbout={currentAbout} 
+            abouts={abouts} 
+            fetchAll={fetchAll}
+        />
+    );
 };
 
 export default AboutContainer;
