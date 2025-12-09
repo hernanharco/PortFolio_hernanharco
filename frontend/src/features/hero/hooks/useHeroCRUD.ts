@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import HeroDAO from "@/hero/service/HeroDAO.js";
+import HeroDAO from "@/features/hero/service/HeroDAO.js";
 import TextSplitter from "@/utils/TextSplitter";
 
 // Tipos importados desde nuestros archivos de tipos
-import type { Hero, HeroInput, ErrorType } from "@/hero/types/HeroData";
-import type { UseHeroReturn } from "@/hero/types/UseHeroReturn";
+import type { Hero, HeroInput, ErrorType } from "@/features/hero/types/HeroData";
+import type { UseHeroReturn } from "@/features/hero/types/UseHeroReturn";
 
 /**
  * Custom Hook para manejar héroes en la aplicación.
@@ -15,7 +15,7 @@ import type { UseHeroReturn } from "@/hero/types/UseHeroReturn";
  *
  * @returns UseHeroReturn - Objeto con estados y funciones para usar en componentes.
  */
-const useHero = (): UseHeroReturn => {
+const useHeroCRUD = (): UseHeroReturn => {
   // --- Estado principal ---
   // Lista de héroes obtenida desde la API
   const [heroes, setHeroes] = useState<Hero[]>([]);
@@ -162,4 +162,4 @@ const useHero = (): UseHeroReturn => {
   };
 };
 
-export default useHero;
+export default useHeroCRUD;
