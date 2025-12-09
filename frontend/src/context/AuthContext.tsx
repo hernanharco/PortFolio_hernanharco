@@ -1,100 +1,121 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+// src/context/AuthContext.tsx
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
-// 1. Definición de la URL de la API
-const API_URL = 'http://localhost:8000/auth/role/';
+const API_URL = "http://localhost:8000/auth/role/";
 
-// 2. Definición de la Interfaz para el estado del Context
-interface AuthContextType {
+export interface AuthContextType {
   userRole: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  // Si añades funciones (ej. login, logout), deben definirse aquí también.
+  refreshAuth: () => Promise<void>; // ← NUEVO
 }
 
-// 3. Definición de la Interfaz para las Props del Proveedor
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-// 4. Creación del Context
-// Usamos el tipo definido y establecemos un valor inicial por defecto (idealmente vacío/null)
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// 5. Custom Hook para consumir el Context fácilmente
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  
-  // Verificación de tipo y uso correcto del hook
-  if (context === null) {
-    throw new Error('useAuth debe usarse dentro de un AuthProvider');
-  }
-  return context;
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth debe usarse dentro de un AuthProvider");
+  return ctx;
 };
 
-// 6. Componente Proveedor (Provider) que contiene la lógica
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  // Estado tipado: userRole puede ser string o null
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      try {
-        const response = await fetch(API_URL, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: 'include'
-        });
+  /* --------------------------------------------
+     FUNCIÓN QUE SE PUEDE LLAMAR DESDE AFUERA
+     -------------------------------------------- */
+  const refreshAuth = async () => {
+    console.log("🔄 Ejecutando refreshAuth()…");
+    await fetchRole(); // vuelve a consultar el backend
+  };
 
-        // Aseguramos que la respuesta sea JSON si la petición fue exitosa o no
-        const data: { role?: string; message?: string } = await response.json();
+  /* --------------------------------------------
+     FUNCIÓN INTERNA: consulta backend
+     -------------------------------------------- */
+  const fetchRole = async () => {
+    try {
+      const response = await fetch(API_URL, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
 
-        if (response.ok) {
-          // Éxito: El token es válido y se recibió el rol
-          setUserRole(data.role ?? 'default'); // Usamos 'default' o un rol seguro si 'role' es undefined
-          setIsAuthenticated(true);
-          console.log("✅ AuthContext: Rol recibido:", data.role);
-        } else if (response.status === 401 || response.status === 403) {
-          // Error de autenticación/autorización
-          setUserRole(null);
-          setIsAuthenticated(false);
-          console.log("❌ AuthContext: Usuario no autenticado (Status:", response.status, ")");
-        } else {
-          // Otros errores del servidor
-          console.error("❌ AuthContext: Error del servidor:", data.message);
-          setUserRole(null);
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        // En un error de red o de parsing, la autenticación se considera fallida.
-        console.error("❌ AuthContext: Error de conexión con el backend:", error);
+      const data = await response.json();
+
+      if (response.ok) {
+        const role = data.role && data.role !== "null" ? data.role : "default";
+        setUserRole(role);
+        setIsAuthenticated(true);
+        console.log("✔ AuthContext: usuario autenticado con rol:", role);
+      } else {
         setUserRole(null);
         setIsAuthenticated(false);
-      } finally {
-        // Indica que la carga inicial ha terminado
-        setIsLoading(false);
+        console.log("❌ AuthContext: no autenticado");
+      }
+    } catch (error) {
+      console.error("❌ Error conectando al backend:", error);
+      setUserRole(null);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /* --------------------------------------------
+     Se ejecuta SOLO una vez al cargar la app
+     -------------------------------------------- */
+  useEffect(() => {
+    fetchRole();
+  }, []);
+
+  /* --------------------------------------------
+     ESCUCHA MENSAJES DEL POPUP
+     -------------------------------------------- */
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      // ✅ Validar que el mensaje venga de la URL confiable
+      const trustedOrigin = "http://localhost:3001";
+
+      if (event.origin !== trustedOrigin) {
+        console.warn("Mensaje ignorado de origen no confiable:", event.origin);
+        return; // Ignora mensajes de otros dominios
+      }
+
+      // Solo procesar si es el tipo correcto
+      if (event.data?.type === "auth:refresh") {
+        console.log("📩 Mensaje recibido: auth:refresh");
+        refreshAuth(); // Actualiza el AuthContext
       }
     };
 
-    fetchRole();
-  }, []); // Se ejecuta solo una vez al montar
-
-  // Valor del Context con el tipo definido
-  const contextValue: AuthContextType = {
-    userRole,
-    isAuthenticated,
-    isLoading,
-  };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
 
   return (
-    <AuthContext.Provider value={contextValue}>
+    <AuthContext.Provider
+      value={{
+        userRole,
+        isAuthenticated,
+        isLoading,
+        refreshAuth, // ← exportado al resto de la app
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Exportamos solo el proveedor para que se use en App.tsx
 export default AuthProvider;

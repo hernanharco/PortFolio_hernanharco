@@ -67,6 +67,9 @@ const CoreValuesView: React.FC<CoreValuesViewProps> = ({
     return null;
   }
 
+  const MAX_VALUES = 3;
+  const showAddButton = localValues.length < MAX_VALUES;
+
   return (
     <div>
       <div className="mt-16 text-center">
@@ -129,6 +132,7 @@ const CoreValuesView: React.FC<CoreValuesViewProps> = ({
           ))}
 
           {/* BOTÓN DE ADICIÓN (sin cambios) */}
+          {showAddButton && (
           <button
             onClick={handleAddValueClick}
             className="p-6 h-full border-2 border-dashed border-gray-300 text-gray-500 rounded-lg 
@@ -140,6 +144,7 @@ const CoreValuesView: React.FC<CoreValuesViewProps> = ({
             <Plus className="w-8 h-8 mb-2 stroke-1" />
             <span className="text-lg font-medium">Añadir Nuevo Valor</span>
           </button>
+          )}
         </div>
       </div>
     </div>

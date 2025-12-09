@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UpdateButton from "@/components/ui/UpdateButton";
-import { Hero } from "@/hero/types/HeroData";
+import { Hero } from "@/features/hero/types/HeroData";
 
 /**
  * Tipos de Props para HeroView

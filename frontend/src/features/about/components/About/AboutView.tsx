@@ -27,15 +27,15 @@ const AboutView: React.FC<AboutViewProps> = ({
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Story Content */}
-          <StoryContentView currentAbout={currentAbout} />        
+          <StoryContentView currentAbout={currentAbout} /> 
           {/* Key Highlights */}
           <div>
             <KeyHighlightsView
               currentAbout={currentAbout}
               abouts={abouts}
               fetchAllAbouts={fetchAll}
-            />{" "}
-                       
+            />
+            
           </div>
         </div>
 
